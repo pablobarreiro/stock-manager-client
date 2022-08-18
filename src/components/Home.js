@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import TableProduct from "../commons/TableProducts";
 import { AuthContext } from "../contexts/authContext";
 import { ProductContext } from "../contexts/productsContext";
+import { ActualSaleContext } from "../contexts/actualSaleContext";
 import useInput from "../hooks/useInput";
 
 import Table from "react-bootstrap/Table";
@@ -12,8 +13,9 @@ import { useNavigate } from "react-router-dom";
 
 const Home = ({ edit }) => {
   const navigate = useNavigate();
-  const [actualSale, setActualSale] = useState([]);
-  const search = useInput();
+  const [toggled, setToggled] = useState(false);
+  const search = useInput('');
+  const { actualSale, setActualSale } = useContext(ActualSaleContext);
   const { products, setProducts } = useContext(ProductContext);
   const { isAuthenticated } = useContext(AuthContext);
   const [filteredProducts, setFilteredProducts] = useState(products || []);
@@ -64,6 +66,15 @@ const Home = ({ edit }) => {
       .catch((err) => console.log(err));
   };
 
+  const handleLowStock = () => {
+    let newProducts = [];
+    products.forEach((product) =>
+      product.stock <= 5 ? newProducts.push(product) : null
+    );
+    setProducts(newProducts);
+    setToggled(true);
+  };
+
   if (!isAuthenticated) return <></>;
 
   return (
@@ -83,13 +94,7 @@ const Home = ({ edit }) => {
         )}
         <tbody>
           {actualSale.map((product, i) => (
-            <TableProduct
-              sale={true}
-              product={product}
-              actualSale={actualSale}
-              setActualSale={setActualSale}
-              key={i}
-            />
+            <TableProduct sale={true} product={product} key={i} />
           ))}
         </tbody>
         {actualSale[0] && (
@@ -111,7 +116,25 @@ const Home = ({ edit }) => {
       )}
       <div style={{ marginBottom: "3%" }}></div>
 
-      <label>Buscar por nombre o categoria: </label>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <label>Buscar por nombre o categoria: </label>
+        {!toggled ? (
+          <Button onClick={handleLowStock}> Poco Stock </Button>
+        ) : (
+          <Button
+            onClick={axios
+              .get("/api/products/all")
+              .then((res) => res.data)
+              .then((prod) => {
+                setProducts(prod);
+                setToggled(false);
+              })}
+          >
+            {" "}
+            Todos los productos{" "}
+          </Button>
+        )}
+      </div>
       <Form.Control {...search} />
 
       <Table size="sm" striped>
@@ -127,14 +150,7 @@ const Home = ({ edit }) => {
         </thead>
         <tbody>
           {filteredProducts.map((product, i) => (
-            <TableProduct
-              sale={false}
-              edit={edit}
-              product={product}
-              actualSale={actualSale}
-              setActualSale={setActualSale}
-              key={i}
-            />
+            <TableProduct sale={false} edit={edit} product={product} key={i} />
           ))}
         </tbody>
       </Table>

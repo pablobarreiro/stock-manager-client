@@ -4,21 +4,24 @@ import Button from "react-bootstrap/Button";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { ProductContext } from "../contexts/productsContext";
+import { ActualSaleContext } from "../contexts/actualSaleContext";
+import swal from 'sweetalert';
 
-const TableProduct = ({ sale, edit, product, actualSale, setActualSale }) => {
+const TableProduct = ({ sale, edit, product }) => {
   const [quantity, setQuantity] = useState(1);
   const price = useInput(product.price);
   const name = useInput(product.name);
   const category = useInput(product.category);
   const stock = useInput(product.stock);
   const { setProducts } = useContext(ProductContext);
-
+  const { actualSale, setActualSale } = useContext(ActualSaleContext)
+  
   const handleAdd = () => {
     if (
-      quantity !== "" &&
+      !quantity !== "" &&
       price.value !== "" &&
       quantity !== 0 &&
-      price.value !== 0 &&
+      !price.value !== 0 &&
       product.stock
     ) {
       setActualSale([
@@ -100,9 +103,18 @@ const TableProduct = ({ sale, edit, product, actualSale, setActualSale }) => {
         </>
       ) : (
         <td>
+          { !product.stock ? 
+          <Button disabled='disabled' variant="outline-success">
+          Sin Stock
+          </Button>
+          : actualSale.find(sale=> sale.name === product.name) ? 
+          <Button disabled='disabled' variant="outline-success">
+            agregado
+          </Button>
+          :
           <Button variant="outline-success" onClick={handleAdd}>
             agregar
-          </Button>
+          </Button> }
         </td>
       )}
     </tr>

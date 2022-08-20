@@ -6,6 +6,7 @@ import axios from "axios";
 import { ProductContext } from "../contexts/productsContext";
 import { ActualSaleContext } from "../contexts/actualSaleContext";
 import swal from 'sweetalert';
+import { prependBaseUri } from "../baseUri";
 
 const TableProduct = ({ sale, edit, product }) => {
   const [quantity, setQuantity] = useState(1);
@@ -37,13 +38,13 @@ const TableProduct = ({ sale, edit, product }) => {
 
   useEffect(() => {
     axios
-      .put(`/api/products/edit/${product.id}`, {
+      .put(prependBaseUri(`/api/products/edit/${product.id}`), {
         name: name.value,
         category: category.value,
         stock: stock.value,
         price: product.price,
       })
-      .then(() => axios.get("/api/products/all"))
+      .then(() => axios.get(prependBaseUri("/api/products/all")))
       .then((res) => res.data)
       .then((prod) => setProducts(prod));
   }, [edit]);
@@ -104,7 +105,7 @@ const TableProduct = ({ sale, edit, product }) => {
       ) : (
         <td>
           { !product.stock ? 
-          <Button disabled='disabled' variant="outline-success">
+          <Button disabled='disabled' variant="outline-danger">
           Sin Stock
           </Button>
           : actualSale.find(sale=> sale.name === product.name) ? 

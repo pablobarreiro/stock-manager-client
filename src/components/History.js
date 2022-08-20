@@ -5,6 +5,7 @@ import { AuthContext } from "../contexts/authContext";
 import { groupBy } from "../utils/functions";
 import SaleGroup from "./SaleGroup";
 import Table from "react-bootstrap/Table";
+import { prependBaseUri } from "../baseUri";
 
 const History = () => {
   const location = useLocation();
@@ -15,7 +16,7 @@ const History = () => {
   useEffect(() => {
     if (!isAuthenticated) navigate("/");
     axios
-      .get("/api/sales/all")
+      .get(prependBaseUri("/api/sales/all"))
       .then((res) => res.data)
       .then((sales) => {
         const historySales = groupBy(sales, "order_number");

@@ -5,6 +5,7 @@ import { AuthContext } from "../contexts/authContext";
 import NewProduct from "./NewProduct";
 
 import Button from "react-bootstrap/Button";
+import { prependBaseUri } from "../baseUri";
 
 const NavigationBar = ({ edit, handleEdit }) => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const NavigationBar = ({ edit, handleEdit }) => {
 
   useEffect(() => {
     axios
-      .get("/api/user/me")
+      .get(prependBaseUri("/api/user/me"))
       .then((res) => res.data)
       .then((loggedUser) => {
         toggleAuth(loggedUser);
@@ -24,7 +25,7 @@ const NavigationBar = ({ edit, handleEdit }) => {
 
   const handleLogOut = async () => {
     try {
-      await axios.post("/api/user/logout");
+      await axios.post(prependBaseUri("/api/user/logout"));
       toggleAuth(null);
       navigate("/");
     } catch (err) {

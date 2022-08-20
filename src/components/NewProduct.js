@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useContext } from "react";
 import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 import { ProductContext } from "../contexts/productsContext";
 import useInput from "../hooks/useInput";
+import { prependBaseUri } from "../baseUri";
 
 const NewProduct = ({ show, setShow }) => {
   const name = useInput("");
@@ -15,7 +17,7 @@ const NewProduct = ({ show, setShow }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("/api/products/add", {
+      .post(prependBaseUri("/api/products/add"), {
         name: name.value,
         category: category.value,
         stock: Number(stock.value),
@@ -23,7 +25,7 @@ const NewProduct = ({ show, setShow }) => {
       })
       .then(() => {
         axios
-          .get("/api/products/all")
+          .get(prependBaseUri("/api/products/all"))
           .then((res) => res.data)
           .then((prod) => {
             setProducts(prod);
@@ -50,8 +52,8 @@ const NewProduct = ({ show, setShow }) => {
         </form>
       </Modal.Body>
       <Modal.Footer>
-        <button form="addProductForm">Agregar</button>
-        <button onClick={() => setShow(false)}>Close</button>
+        <button variant='primary' form="addProductForm">Agregar</button>
+        <Button variant='secondary' onClick={() => setShow(false)}>Close</Button>
       </Modal.Footer>
     </Modal>
   );

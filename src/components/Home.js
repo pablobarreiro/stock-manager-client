@@ -10,11 +10,13 @@ import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
+import { prependBaseUri } from "../baseUri";
+
 
 const Home = ({ edit }) => {
   const navigate = useNavigate();
   const [toggled, setToggled] = useState(false);
-  const search = useInput('');
+  const search = useInput("");
   const { actualSale, setActualSale } = useContext(ActualSaleContext);
   const { products, setProducts } = useContext(ProductContext);
   const { isAuthenticated } = useContext(AuthContext);
@@ -24,7 +26,7 @@ const Home = ({ edit }) => {
   useEffect(() => {
     if (!isAuthenticated) navigate("/");
     axios
-      .get("/api/products/all")
+      .get(prependBaseUri("/api/products/all"))
       .then((res) => res.data)
       .then((prods) => {
         setProducts(prods);
@@ -50,17 +52,17 @@ const Home = ({ edit }) => {
 
   const handleConfirmSale = () => {
     axios
-      .post("/api/sales/confirm", actualSale)
+      .post(prependBaseUri("/api/sales/confirm"), actualSale)
       .then(() => {
         actualSale.forEach((product) => {
-          product.stock = product.stock - product.quantity;
-          return axios.put(`/api/products/edit/${product.id}`, product);
+          product.stock -= product.quantity;
+          return axios.put(prependBaseUri(`/api/products/edit/${product.id}`), product);
         });
       })
-      .then(() => axios.get("/api/products/all"))
+      .then(() => axios.get(prependBaseUri("/api/products/all")))
       .then((res) => res.data)
-      .then((newProductList) => {
-        setProducts(newProductList);
+      .then((newStockList) => {
+        setProducts(newStockList);
         setActualSale([]);
       })
       .catch((err) => console.log(err));
@@ -122,13 +124,15 @@ const Home = ({ edit }) => {
           <Button onClick={handleLowStock}> Poco Stock </Button>
         ) : (
           <Button
-            onClick={axios
-              .get("/api/products/all")
-              .then((res) => res.data)
-              .then((prod) => {
-                setProducts(prod);
-                setToggled(false);
-              })}
+            onClick={() =>
+              axios
+                .get("/api/products/all")
+                .then((res) => res.data)
+                .then((prod) => {
+                  setProducts(prod);
+                  setToggled(false);
+                })
+            }
           >
             {" "}
             Todos los productos{" "}

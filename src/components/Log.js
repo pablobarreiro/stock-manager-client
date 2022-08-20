@@ -4,6 +4,7 @@ import axios from "axios";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../contexts/authContext";
 import Button from "react-bootstrap/Button";
+import { prependBaseUri } from "../baseUri";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("/api/user/login", {
+      .post(prependBaseUri("/api/user/login"), {
         email: email.value,
         password: password.value,
       })

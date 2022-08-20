@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Table from "react-bootstrap/Table";
+import { prependBaseUri } from "../baseUri";
 
 const SaleDetail = () => {
   const { orderNumber } = useParams();
@@ -10,7 +11,7 @@ const SaleDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`/api/sales/one/${orderNumber}`)
+      .get(prependBaseUri(`/api/sales/one/${orderNumber}`))
       .then((res) => res.data)
       .then((sale) => {
         setSingleSale(sale);

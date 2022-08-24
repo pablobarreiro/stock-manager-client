@@ -41,15 +41,21 @@ const SaleDetail = () => {
             </tr>
           </tbody>
         ))}
-      <tfoot>
-        <tr>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td>Total: $ {total}</td>
-        </tr>
-      </tfoot>
+      {singleSale[0] && (
+        <tfoot>
+          <tr>
+            <td />
+            <td />
+            <td />
+            <td>
+              <p>Efectivo: $ {singleSale[0].eft_total}</p>
+              <p>Mercado Pago: $ {singleSale[0].mp_total}</p>
+              <p>Transferencia: $ {singleSale[0].transf_total}</p>
+            </td>
+            <td>Total: $ {total}</td>
+          </tr>
+        </tfoot>
+      )}
     </Table>
   );
 };

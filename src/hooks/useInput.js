@@ -1,7 +1,9 @@
 import { useState } from "react";
 
 export const useInput = (initialValue) => {
-  const [value, setValue] = useState((initialValue || initialValue===0) ? initialValue : "");
+  const [value, setValue] = useState(
+    initialValue || initialValue === 0 ? initialValue : ""
+  );
 
   const onChange = (e) => {
     setValue(e.target.value);

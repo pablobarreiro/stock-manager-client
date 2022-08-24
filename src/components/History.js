@@ -31,6 +31,7 @@ const History = () => {
           <tr>
             <th>Fecha</th>
             <th>Numero de venta</th>
+            <th>Vendido a</th>
             <th>Total</th>
             <th>Ver Detalles</th>
           </tr>

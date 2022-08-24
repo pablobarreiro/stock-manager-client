@@ -19,6 +19,7 @@ const SaleGroup = ({ products }) => {
       <tr>
         <td>{products[0].createdAt.slice(0, 10)}</td>
         <td>{products[0].order_number}</td>
+        <td>{products[0].sold_to}</td>
         <td>
           <span>$ {total}</span>
         </td>

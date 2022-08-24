@@ -11,17 +11,19 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 import { prependBaseUri } from "../baseUri";
+import ConfirmSale from "./ConfirmSale";
 
 
 const Home = ({ edit }) => {
   const navigate = useNavigate();
   const [toggled, setToggled] = useState(false);
+  const [show,setShow] = useState(false)
   const search = useInput("");
   const { actualSale, setActualSale } = useContext(ActualSaleContext);
   const { products, setProducts } = useContext(ProductContext);
   const { isAuthenticated } = useContext(AuthContext);
   const [filteredProducts, setFilteredProducts] = useState(products || []);
-  const total = actualSale.reduce((pv, cv) => cv.price * cv.quantity + pv, 0);
+  const total = Math.floor(actualSale.reduce((pv, cv) => cv.price * cv.quantity + pv, 0)*100)/100;
 
   useEffect(() => {
     if (!isAuthenticated) navigate("/");
@@ -112,7 +114,7 @@ const Home = ({ edit }) => {
         )}
       </Table>
       {actualSale[0] && (
-        <Button variant="outline-success" onClick={handleConfirmSale}>
+        <Button variant="outline-success" onClick={()=>setShow(true)}>
           Finalizar venta
         </Button>
       )}
@@ -158,6 +160,7 @@ const Home = ({ edit }) => {
           ))}
         </tbody>
       </Table>
+      <ConfirmSale show={show} setShow={setShow} total={total}/>
     </>
   );
 };

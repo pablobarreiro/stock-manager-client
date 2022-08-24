@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/authContext";
 import NewProduct from "./NewProduct";
+import swal from "sweetalert";
 
 import Button from "react-bootstrap/Button";
 import { prependBaseUri } from "../baseUri";
@@ -33,6 +34,28 @@ const NavigationBar = ({ edit, handleEdit }) => {
     }
   };
 
+  const handleLoadDB = () => {
+
+  }
+
+  const handleClearDB = () => {
+    swal({
+      title: "Eliminar Base de datos",
+      icon: "warning",
+      text: "Estas seguro que queres eliminar la lista de productos? Una vez confirmado no hay vuelta atras",
+      buttons: ["NO!", "Si, eliminar"],
+    }).then((willDelete) => {
+      if (willDelete) {
+        axios.delete(prependBaseUri('/api/products/db'))
+        .then(()=>{
+          swal("Se elimino la base de datos de productos correctamente", {
+            icon: "success",
+          });
+        })
+      }
+    });
+  };
+
   if (!isAuthenticated) return <></>;
 
   return (
@@ -59,23 +82,24 @@ const NavigationBar = ({ edit, handleEdit }) => {
           >
             Agregar Producto
           </Button>
-          {location.pathname==='/home' && (edit ? (
-            <Button
-              variant="primary"
-              style={{ marginRight: "10px" }}
-              onClick={handleEdit}
-            >
-              Confirmar edicion
-            </Button>
-          ) : (
-            <Button
-              variant="outline-primary"
-              style={{ marginRight: "10px" }}
-              onClick={handleEdit}
-            >
-              Editar
-            </Button>
-          ))}
+          {location.pathname === "/home" &&
+            (edit ? (
+              <Button
+                variant="primary"
+                style={{ marginRight: "10px" }}
+                onClick={handleEdit}
+              >
+                Confirmar edicion
+              </Button>
+            ) : (
+              <Button
+                variant="outline-primary"
+                style={{ marginRight: "10px" }}
+                onClick={handleEdit}
+              >
+                Editar
+              </Button>
+            ))}
           {location.pathname === "/history" ? (
             <Button variant="outline-primary" onClick={() => navigate("/home")}>
               Volver
@@ -88,6 +112,20 @@ const NavigationBar = ({ edit, handleEdit }) => {
               Historial
             </Button>
           )}
+          <Button
+            variant="outline-primary"
+            style={{ marginLeft: "10px" }}
+            onClick={handleLoadDB}
+          >
+            Cargar DB
+          </Button>
+          <Button
+            variant="danger"
+            style={{ marginLeft: "10px" }}
+            onClick={handleClearDB}
+          >
+            Eliminar DB
+          </Button>
         </div>
         {user && (
           <h1 style={{ textTransform: "capitalize" }}>{user.username}</h1>
